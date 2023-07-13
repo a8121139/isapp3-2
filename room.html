@@ -35,6 +35,9 @@
 
             await refreshComments();
             setInterval(refreshComments, 2000);
+
+            await alreadyStart();
+            setInterval(alreadyStart, 2000);
         });
 
         async function newTopic() {
@@ -68,6 +71,31 @@
             document.getElementById('comments').innerHTML = html;
         }
 
+        async function alreadyStart() {
+            var startSql = `select turn from Rooms where id = ${roomId};`;
+            var startId = await osql.connect(startSql);
+            console.log(startId)
+            startId = Number(startId[0].turn);
+            if (startId == 1) {
+                window.location.href = "gamePage.html";
+            }
+        }
+
+        async function gameStart() {
+            var turn = 1;
+            var sql = `update Rooms set turn = '${turn}' where id = ${roomId};`;
+            var commentId = await osql.connectInsert(sql);
+            /*
+            var startSql = `select turn from Rooms where id = ${roomId};`;
+            var startId = await osql.connect(startSql);
+            console.log(startId)
+            startId = Number(startId[0].turn);
+            if (startId == 1) {
+                window.location.href = "gamePage.html";
+            }
+            */
+        }
+
     </script>
 
 </head>
@@ -81,6 +109,7 @@
     <div>
         <input id="topic" type="text">
         <button onclick="newTopic()">お題決定</button>
+        <input type="button" value="Start" onclick="gameStart()" />
     </div>
     <hr>
     <br>
